@@ -1,5 +1,8 @@
 import folium
 import pandas as pd
+import webbrowser
+import sys
+import os
 
 class MapGeneration:
     
@@ -21,7 +24,20 @@ class MapGeneration:
             "Gray line" : "lightgray",
         }
 
+    def resource_path(self,relative_path):
+        """ Get absolute path to resource, works for dev and for PyInstaller """
+        try:
+            # PyInstaller creates a temp folder and stores path in _MEIPASS
+            base_path = sys._MEIPASS
+        except Exception:
+            base_path = os.path.abspath(".")
+
+        return os.path.join(base_path, relative_path)
+
     def generate_map(self):
+        webbrowser.open(self.resource_path("delhiMap.html"),2)
+
+    def generate_map_file(self):
         delhiMap = folium.Map(location=[28.7041, 77.1025], zoom_start=11)
 
         for _,row in self.__metro_data.iterrows():
@@ -34,6 +50,6 @@ class MapGeneration:
                 icon = folium.Icon(color=color)
             ).add_to(delhiMap)
 
-        delhiMap.show_in_browser()
+        delhiMap.save(self.__output_file)
 
 
